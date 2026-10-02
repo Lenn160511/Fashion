@@ -1,0 +1,166 @@
+:root {
+  --leinen: #e8dfcc;
+  --pergament: #f0e9d9;
+  --tannengruen: #2c3e30;
+  --moosgruen: #3b5040;
+  --abstand: 1.25rem;
+  --kopf: 6.5rem;
+  /* Bildbreite: etwas kleiner als zuvor, Format 4:5 */
+  --breite: min(calc((100svh - var(--kopf) - 2 * var(--abstand)) * 0.8), 88vw);
+  --titel: "Bodoni Moda", "Didot", "Bodoni 72", "Palatino Linotype", Georgia, serif;
+  --text: "Cormorant Garamond", "Palatino Linotype", Palatino, Georgia, serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--leinen);
+  color: var(--tannengruen);
+  font-family: var(--text);
+  overflow: hidden;
+}
+
+/* Überschrift, bündig mit dem linken Rand des ersten Bildes */
+.kopf {
+  height: var(--kopf);
+  padding: 1.6rem 0 0 calc((100vw - var(--breite)) / 2);
+}
+.kopf h1 {
+  margin: 0;
+  font-family: var(--titel);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.kopf p {
+  margin: 0.45rem 0 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* Waagerechte Bildstrecke, ein Bild rastet immer mittig ein */
+.strecke {
+  display: flex;
+  gap: var(--abstand);
+  height: calc(100svh - var(--kopf));
+  padding: 0 calc((100vw - var(--breite)) / 2) var(--abstand);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  outline: none;
+}
+.strecke::-webkit-scrollbar { display: none; }
+
+figure {
+  position: relative;
+  flex: 0 0 var(--breite);
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--tannengruen);
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  opacity: 0;
+  animation: einblenden 1.4s ease-out 0.1s forwards;
+}
+
+@keyframes einblenden { to { opacity: 1; } }
+
+figure img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 1.6s ease;
+}
+figure:hover img { transform: scale(1.02); }
+
+/* Weicher dunkelgrüner Verlauf, damit der Text ruhig lesbar bleibt */
+figure::after {
+  content: "";
+  position: absolute;
+  inset: 40% 0 0 0;
+  background: linear-gradient(to top, rgba(28, 42, 32, 0.82), rgba(28, 42, 32, 0));
+  pointer-events: none;
+}
+
+figcaption {
+  position: absolute;
+  left: clamp(1.25rem, 3vw, 2.25rem);
+  right: clamp(1.25rem, 3vw, 2.25rem);
+  bottom: clamp(1.25rem, 3vw, 2.25rem);
+  z-index: 1;
+  color: var(--pergament);
+}
+.nr {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+}
+figcaption h2 {
+  margin: 0;
+  font-family: var(--titel);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 3.8vw, 3.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+figcaption p {
+  margin: 0.7rem 0 0;
+  max-width: 28ch;
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+/* Pfeile aus reinem CSS */
+.pfeil {
+  position: fixed;
+  bottom: calc(var(--abstand) + 0.75rem);
+  z-index: 2;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid rgba(240, 233, 217, 0.55);
+  background: rgba(44, 62, 48, 0.55);
+  cursor: pointer;
+  transition: background 0.4s ease;
+}
+.pfeil:hover { background: var(--tannengruen); }
+.pfeil:focus-visible { outline: 2px solid var(--pergament); outline-offset: 2px; }
+.pfeil::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-top: 1px solid var(--pergament);
+  border-right: 1px solid var(--pergament);
+}
+.weiter { right: calc(var(--abstand) + 0.75rem); }
+.weiter::before { transform: translate(-65%, -50%) rotate(45deg); }
+.zurueck { right: calc(var(--abstand) + 3.75rem); }
+.zurueck::before { transform: translate(-35%, -50%) rotate(-135deg); }
+
+@media (max-width: 700px) {
+  :root { --abstand: 0.75rem; --breite: 84vw; --kopf: 6rem; }
+  .pfeil { display: none; }
+  .kopf p { font-size: 1.05rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  figure { animation: none; opacity: 1; }
+  figure img { transition: none; }
+  figure:hover img { transform: none; }
+}
